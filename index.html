@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Omkar AI</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background: #0d0d0d;
+      color: white;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 900px;
+      height: 95vh;
+      background: #111;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid #222;
+    }
+
+    header {
+      padding: 20px;
+      font-size: 20px;
+      font-weight: 600;
+      border-bottom: 1px solid #222;
+    }
+
+    .chat {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .message {
+      margin-bottom: 16px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .user {
+      text-align: right;
+      color: #9ae6b4;
+    }
+
+    .bot {
+      text-align: left;
+      color: #e2e8f0;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 15px;
+      border-top: 1px solid #222;
+      gap: 10px;
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: #1a1a1a;
+      color: white;
+      height: 60px;
+    }
+
+    button {
+      padding: 12px 18px;
+      background: #4f46e5;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>Omkar AI</header>
+
+    <div id="chat" class="chat"></div>
+
+    <div class="input-area">
+      <textarea id="prompt" placeholder="Ask Omkar AI anything..."></textarea>
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("prompt");
+      const chat = document.getElementById("chat");
+
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      chat.innerHTML += `<div class="message user">${userText}</div>`;
+      input.value = "";
+      chat.scrollTop = chat.scrollHeight;
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userText }),
+      });
+
+      const data = await res.json();
+
+      chat.innerHTML += `<div class="message bot">${data.reply}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>
